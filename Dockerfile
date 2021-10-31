@@ -8,7 +8,6 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /code
 COPY ./ryde /code
-COPY ./requirements.txt /code
 
 # Install dependencies
 RUN pip3 install --upgrade pip 
