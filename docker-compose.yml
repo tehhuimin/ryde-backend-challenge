@@ -3,7 +3,10 @@ version: '3.7'
 services:
   backend:
       build: .
-      command: bash -c "python ./manage.py runserver 0.0.0.0:8000" 
+      command: bash -c "
+                python ./manage.py migrate --fake-initial && 
+                python ./manage.py runserver 0.0.0.0:8000
+              " 
       volumes:
         - ./ryde:/code
         - .env:/code/.env
