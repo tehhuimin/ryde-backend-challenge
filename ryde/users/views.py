@@ -1,15 +1,27 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions, status
+from rest_framework import status
+from drf_yasg.views import get_schema_view
+from .models import Users
+from .serializers import UsersSerializer
+# from .serializers import UsersSerializer
 
 class ListUsers(APIView):
 
     def get(self, request, format=None):
         """
-        Read data of a user
+        Read data of all users
         """
-        # usernames = [user.username for user in User.objects.all()]
-        return Response(data = {'list_of_users': ['hi', 'hi2']}, status=status.HTTP_200_OK)
+        try: 
+            users = Users.objects.all()
+            users_response = UsersSerializer(users, many=True).data
+            response = {
+                "users": users_response
+            }
+            return Response(data = response, status=status.HTTP_200_OK)
+        except Exception as e: 
+            return Response(data={'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def post(self, request, format=None):
         """

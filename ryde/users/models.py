@@ -14,5 +14,8 @@ class Users(models.Model):
    createdAt = models.DateTimeField(auto_now_add=True)
    dob = models.DateField(null=True)
    id = models.CharField(max_length=20, null=False, primary_key=True)   # user id
-   address = Address()
+   address = models.EmbeddedModelField(
+      model_container=Address
+   )    
 
+   objects = models.DjongoManager()
