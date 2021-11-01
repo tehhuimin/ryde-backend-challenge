@@ -78,8 +78,13 @@ WSGI_APPLICATION = 'ryde.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USERNAME'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': int(env('DATABASE_PORT')),
+        'SUPPORTS_TRANSACTIONS': False,
     }
 }
 
