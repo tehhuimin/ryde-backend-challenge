@@ -89,8 +89,8 @@ class UsersView(APIView):
         try: 
             user = Users.objects.get(id=id)
             user.delete()
-            return JsonResponse(data = {'success': True}, status=status.HTTP_204_NO_CONTENT)
+            return JsonResponse(data = {'success': True}, status=status.HTTP_200_OK)
         except Users.DoesNotExist: 
-            return JsonResponse({'error': 'The user does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+            return JsonResponse({'error': 'The user does not exist','success': False}, status=status.HTTP_404_NOT_FOUND) 
         except Exception as e: 
-            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse(data={'error': str(e), 'success': False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
