@@ -54,6 +54,9 @@ class UsersView(APIView):
         Create a new user
         """
         try: 
+            user = Users.objects.get(id=id)
+            return JsonResponse(data = {'error': "User already exists", 'success': False}, status=status.HTTP_400_BAD_REQUEST)
+        except Users.DoesNotExist:
             received_data = json.loads(request.body)
 
             data = { 
