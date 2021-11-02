@@ -161,6 +161,34 @@ class GetUsersTest(TestCase):
         self.assertEqual(user_data['dob'], test_user_data['dob'])
         self.assertEqual(user_data['address'], {**test_user_data['address'], "address_2": ""})
 
+    def tests_create_user_additional_invalid_fields(self):
+        """
+            Test Case: POST /user/<str:id>/
+            Test if API is giving bad request error when additional fields filled up
+        """
+
+        test_user_data = {
+            "name": "hui min",
+            "description": "",
+            "dob": "2021-11-02",
+            "address": {
+                "address_1": "blk 78 ",
+                "city": "singapore",
+                "state": "singapore",
+                "zip_code": "310078", 
+                "testtttt": "dhaka"
+            }, 
+            "test": "test"
+        }
+        test_user_id = 'hm333'
+        response = self.client.post(reverse('users', args=[test_user_id]), json.dumps(test_user_data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertTrue('error' in response_data)
+        self.assertEqual(response_data['error'], "Address() got an unexpected keyword argument 'testtttt'")
+
+
     def tests_create_user_invalid_data(self):
         """
             Test Case: POST /user/<str:id>/
@@ -309,7 +337,7 @@ class GetUsersTest(TestCase):
         self.assertEqual(response_data['error']['address']['city'], ['This field is required.'])
         self.assertEqual(response_data['error']['address']['state'], ['This field is required.'])
         self.assertEqual(response_data['error']['address']['zip_code'], ['This field is required.'])
-    
+
 
     def tests_update_user_user_doesnt_exist(self):
         """

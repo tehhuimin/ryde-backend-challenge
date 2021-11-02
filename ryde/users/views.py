@@ -4,7 +4,6 @@ from drf_yasg.views import get_schema_view
 from .models import Users, Address
 from .serializers import UsersSerializer
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 import json
 
@@ -63,18 +62,19 @@ class UsersView(APIView):
                 **received_data, 
                 "id": id
             }
-
-            # check if data is valid
-            serializer = UsersSerializer(data=data)
-            if serializer.is_valid(): 
-
-                # get address to be inserted as an embedded model
-                address = data['address']
-                del data['address']
-                created = Users.objects.create(address=Address(**address), **data)
-                return JsonResponse(data = {'data': UsersSerializer(created).data, 'success': True}, status=status.HTTP_201_CREATED)
-            else: 
-                return JsonResponse(data = {'error': serializer.errors, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
+            try: 
+                # check if data is valid
+                serializer = UsersSerializer(data=data)
+                if serializer.is_valid(): 
+                    # get address to be inserted as an embedded model
+                    address = data['address']
+                    del data['address']
+                    created = Users.objects.create(address=Address(**address), **data)
+                    return JsonResponse(data = {'data': UsersSerializer(created).data, 'success': True}, status=status.HTTP_201_CREATED)
+                else: 
+                    return JsonResponse(data = {'error': serializer.errors, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e: 
+                return JsonResponse(data={'error': str(e), 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e: 
             return JsonResponse(data={'error': str(e), 'success': False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
