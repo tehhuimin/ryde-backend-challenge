@@ -102,7 +102,7 @@ class UsersView(APIView):
             else: 
                 return JsonResponse(data = {'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Users.DoesNotExist: 
-            return JsonResponse({'error': 'The user does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+            return JsonResponse({'error': 'The user does not exist','success': False}, status=status.HTTP_404_NOT_FOUND) 
         except Exception as e: 
             return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
