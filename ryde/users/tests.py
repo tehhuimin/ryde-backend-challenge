@@ -48,9 +48,10 @@ class GetUsersTest(TestCase):
         response = self.client.get(reverse('all_users'))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('users' in response.json())
-        received_data = response.json()
-        self.assertEqual(len(received_data['users']), 2)
-        users_data = received_data['users']
+        response_data = response.json()
+        self.assertTrue(response_data['success'])
+        self.assertEqual(len(response_data['users']), 2)
+        users_data = response_data['users']
         
         user_1 = users_data[0]['id']
         if user_1 == self.data1['id']: 
@@ -87,8 +88,9 @@ class GetUsersTest(TestCase):
         # check response format
         self.assertEqual(response.status_code, 200)
         self.assertTrue('user' in response.json())
-        received_data = response.json()
-        user_data = received_data['user']
+        response_data = response.json()
+        self.assertTrue(response_data['success'])
+        user_data = response_data['user']
         
         # check user data 
         self.assertEqual(user_data['id'], self.data2['id'])
