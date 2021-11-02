@@ -94,16 +94,19 @@ class UsersView(APIView):
                 "id": id
             }
             # check if data is valid
-            serializer = UsersSerializer(data=data)
-            if serializer.is_valid(): 
-                user.name = data.get('name', '')
-                user.description = data.get('description', '')
-                user.dob = data.get('dob', '')
-                user.address = Address(**data.get("address", {}))
-                user.save()
-                return JsonResponse(data = {'data': serializer.data, 'success': True}, status=status.HTTP_202_ACCEPTED)
-            else: 
-                return JsonResponse(data = {'error': serializer.errors, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
+            try: 
+                serializer = UsersSerializer(data=data)
+                if serializer.is_valid(): 
+                    user.name = data.get('name', '')
+                    user.description = data.get('description', '')
+                    user.dob = data.get('dob', '')
+                    user.address = Address(**data.get("address", {}))
+                    user.save()
+                    return JsonResponse(data = {'data': serializer.data, 'success': True}, status=status.HTTP_202_ACCEPTED)
+                else: 
+                    return JsonResponse(data = {'error': serializer.errors, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e: 
+                return JsonResponse(data={'error': str(e), 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         except Users.DoesNotExist: 
             return JsonResponse({'error': 'The user does not exist','success': False}, status=status.HTTP_404_NOT_FOUND) 
         except Exception as e: 
