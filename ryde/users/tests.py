@@ -148,6 +148,56 @@ class GetUsersTest(TestCase):
         self.assertTrue('createdAt' in user_data)
         self.assertEqual(user_data['address'], {**test_user_data['address'], "address_2": ""})
     
+    def tests_update_user(self):
+        """
+            Test Case: PUT /users/<str:id>/
+            Test if API is able to update user in database
+        """
+        test_user_id = 'yahui-wei'
+        test_user_data = {
+            "name": "Yahui Wei", 
+            "description": "female",
+            "dob": "1976-10-22", 
+            "address": {
+                'address_1' : "70 Newton Road 03-29", 
+                'address_2' : " Hotel Royal",
+                'city' : "Singapore",  
+                'zip_code' : "307964", 
+                'state': "Singapore"
+            }
+        }
+        response = self.client.put(reverse('users', args=[test_user_id]), data=json.dumps(test_user_data), content_type="application/json")
+        self.assertEqual(response.status_code, 202)
+        self.assertTrue('data' in response.json())
+        response_data = response.json()
+        self.assertTrue(response_data['success'])
+
+        # check if data is updated
+        response = self.client.get(reverse('users', args=[test_user_id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('user' in response.json())
+        response_data = response.json()
+        self.assertTrue(response_data['success'])
+        user_data = response_data['user']
+        self.assertEqual(user_data['id'], test_user_id)
+        self.assertEqual(user_data['name'], test_user_data['name'])
+        self.assertEqual(user_data['description'], test_user_data['description'])
+        self.assertEqual(user_data['dob'], test_user_data['dob'])
+        self.assertEqual(user_data['address'], test_user_data['address'])
+
+    def tests_update_user_user_doesnt_exist(self):
+        """
+            Test Case: PUT /users/<str:id>/
+            Test if API is able to return 404 if user id is not found
+        """
+        test_user_id = 'yahui-wei-test'
+        response = self.client.put(reverse('users', args=[test_user_id]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue('error' in response.json())
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertEqual(response_data['error'], 'The user does not exist')
+
     def tests_delete_user(self):
         """
             Test Case: DELETE /users/<str:id>/
