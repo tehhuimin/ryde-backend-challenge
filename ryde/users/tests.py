@@ -22,7 +22,7 @@ class GetUsersTest(TestCase):
         self.test_user = Users.objects.create(**self.data, address=Address(**self.test_address))
 
     def test_get_all_users(self):
-        response = self.client.get(reverse('users'))
+        response = self.client.get(reverse('all_users'))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('users' in response.data)
         self.assertEqual(response.data['users'][0]['id'], self.data['id'])

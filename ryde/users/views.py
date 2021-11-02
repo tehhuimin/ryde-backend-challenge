@@ -1,45 +1,89 @@
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.views import get_schema_view
-from .models import Users
+from .models import Users, Address
 from .serializers import UsersSerializer
-# from .serializers import UsersSerializer
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
+import json
 
-class ListUsers(APIView):
-
+class ListUsersView(APIView):
     def get(self, request, format=None):
         """
-        Read data of all users
+        Read all users data
         """
         try: 
             users = Users.objects.all()
             users_response = UsersSerializer(users, many=True).data
             response = {
-                "users": users_response
+                "users": users_response, 
             }
-            return Response(data = response, status=status.HTTP_200_OK)
+            return JsonResponse(data = response, status=status.HTTP_200_OK)
         except Exception as e: 
-            return Response(data={'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class UsersView(APIView):
 
-    def post(self, request, format=None):
+    def get(self, request, id, format=None):
+        """
+        Read data of one users
+        """
+        
+        try: 
+            user = get_object_or_404(Users, id=id)
+            serializer = UsersSerializer(user)
+            user_response = serializer.data
+            response = {
+                "user": user_response
+            }
+            return JsonResponse(data = response, status=status.HTTP_200_OK)
+        except Exception as e: 
+            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_description="Create a new user", 
+        request_body=UsersSerializer
+    )
+    def post(self, request, id, format=None):
         """
         Create a new user
         """
-        # usernames = [user.username for user in User.objects.all()]
-        return Response(data = {'post': ['hi', 'hi2']}, status=status.HTTP_200_OK)
+        try: 
+            received_data = json.loads(request.body)
 
-    def put(self, request, format=None):
+            data = { 
+                **received_data, 
+                "id": id
+            }
+
+            # check if data is valid
+            serializer = UsersSerializer(data=data)
+            if serializer.is_valid(): 
+
+                # get address to be inserted as an embedded model
+                address = data.pop('address')
+                created = Users.objects.create(address=Address(address), **data)
+                return JsonResponse(data = UsersSerializer(created).data, status=status.HTTP_201_CREATED)
+            else: 
+                return JsonResponse(data = {'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e: 
+            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_description="Update an user details", 
+        request_body=UsersSerializer
+    )
+    def put(self, request, id, format=None):
         """
         Update user
         """
         # usernames = [user.username for user in User.objects.all()]
-        return Response(data = {'put': ['hi', 'hi2']}, status=status.HTTP_200_OK)
+        return JsonResponse(data = {'put': ['hi', 'hi2']}, status=status.HTTP_200_OK)
 
-    def delete(self, request, format=None):
+    def delete(self, request, id, format=None):
         """
         Delete a specific user
         """
         # usernames = [user.username for user in User.objects.all()]
-        return Response(data = {'delete': ['hi', 'hi2']}, status=status.HTTP_200_OK)
+        return JsonResponse(data = {'delete': ['hi', 'hi2']}, status=status.HTTP_200_OK)
