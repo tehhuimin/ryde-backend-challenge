@@ -3,7 +3,7 @@ from .models import Users, Address
 
 class AddressSerializer(serializers.ModelSerializer):
     address_1 = serializers.CharField(max_length=128)
-    address_2 = serializers.CharField(max_length=128, required=False)
+    address_2 = serializers.CharField(max_length=128, required=False, allow_blank=True)
     city = serializers.CharField(max_length=64)
     state = serializers.CharField(max_length=64)
     zip_code = serializers.CharField(max_length=6)
