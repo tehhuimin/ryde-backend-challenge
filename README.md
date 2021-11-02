@@ -38,6 +38,16 @@ Please install docker at `https://docs.docker.com/install/` and docker-compose a
 2. The database used is MongoDB. To connect between Django ORM and MongoDB, a connector  [`djongo`](https://github.com/nesdis/djongo) is used.
 3. `drf-yasg` is used to run Swagger for API documentation.
 
+## Django Project Directory
+- The Django project resides inside the `./ryde` directory.
+- `./ryde/ryde` folder stores the project settings, urls, and other configurations. 
+- `./ryde/users` folder stores the application which includes everything related to the Users feature. 
+    - The models inside `models.py` is the object relational mapping of the MongoDB collections. The configurations such as `allow_blank`, `primary_key` are set inside this file. 
+    - The serializers inside `serializers.py` is used for validation of the input and output format before calling the CRUD methods on the MongoDB. 
+    - `urls.py` store the REST API endpoints available. 
+    - `views.py` is an implementation of the business logic to receive request data and process accordingly before sending it to the model layer. 
+    - `migrations` folder stores the instructions to change the models in the database 
+
 ## The Project Scope
 
 This project only implements one very basic django app, which is a user model stored in a MongoDB database.
@@ -172,6 +182,12 @@ There are five REST APIs implemented. Please refer to `ryde/ryde/urls.py` and `r
     </tr>
 </table>
 
+View the documentation at `localhost:8000`
+1. Click on "Try it out"
+![Use swagger](./use_swagger_1.png "Use Swagger")
+
+2. Edit the columns and click on "execute", scroll down to see the output. 
+![Use swagger 2](./using_swagger_2.png "Use Swagger 2")
 ## Tests Cases
 
 
