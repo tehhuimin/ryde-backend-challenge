@@ -267,6 +267,50 @@ class GetUsersTest(TestCase):
         self.assertEqual(user_data['dob'], test_user_data['dob'])
         self.assertEqual(user_data['address'], test_user_data['address'])
 
+    def tests_update_user_data_invalid(self):
+        """
+            Test Case: PUT /users/<str:id>/
+            Test if API is able to throw bad request error id data is invalid
+        """
+        test_user_id = 'yahui-wei'
+        test_user_data = {
+            "name": "", 
+            "description": "female",
+            "dob": "1976-10-22-2222", 
+        }
+        response = self.client.put(reverse('users', args=[test_user_id]), data=json.dumps(test_user_data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue('error' in response.json())
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertEqual(response_data['error']['name'], ['This field may not be blank.'])
+        self.assertEqual(response_data['error']['dob'], ['Date has wrong format. Use one of these formats instead: YYYY-MM-DD.'])
+        self.assertEqual(response_data['error']['address'], ['This field is required.'])
+    
+    def tests_update_user_data_invalid_address_field_errors(self):
+        """
+            Test Case: PUT /users/<str:id>/
+            Test if API is able to throw bad request error id data is invalid
+        """
+        test_user_id = 'yahui-wei'
+        test_user_data = {
+            "name": "yahui", 
+            "description": "male",
+            "dob": "1976-10-22", 
+            "address": {
+                "address_1": "test", 
+            }, 
+        }
+        response = self.client.put(reverse('users', args=[test_user_id]), data=json.dumps(test_user_data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue('error' in response.json())
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertEqual(response_data['error']['address']['city'], ['This field is required.'])
+        self.assertEqual(response_data['error']['address']['state'], ['This field is required.'])
+        self.assertEqual(response_data['error']['address']['zip_code'], ['This field is required.'])
+    
+
     def tests_update_user_user_doesnt_exist(self):
         """
             Test Case: PUT /users/<str:id>/

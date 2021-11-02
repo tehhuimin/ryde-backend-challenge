@@ -103,7 +103,7 @@ class UsersView(APIView):
                 user.save()
                 return JsonResponse(data = {'data': serializer.data, 'success': True}, status=status.HTTP_202_ACCEPTED)
             else: 
-                return JsonResponse(data = {'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse(data = {'error': serializer.errors, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         except Users.DoesNotExist: 
             return JsonResponse({'error': 'The user does not exist','success': False}, status=status.HTTP_404_NOT_FOUND) 
         except Exception as e: 
