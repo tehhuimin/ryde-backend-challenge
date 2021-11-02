@@ -62,8 +62,9 @@ class UsersView(APIView):
             if serializer.is_valid(): 
 
                 # get address to be inserted as an embedded model
-                address = data.pop('address')
-                created = Users.objects.create(address=Address(address), **data)
+                address = data['address']
+                del data['address']
+                created = Users.objects.create(address=Address(**address), **data)
                 return JsonResponse(data = UsersSerializer(created).data, status=status.HTTP_201_CREATED)
             else: 
                 return JsonResponse(data = {'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
