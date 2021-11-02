@@ -83,8 +83,29 @@ class UsersView(APIView):
         """
         Update user
         """
-        # usernames = [user.username for user in User.objects.all()]
-        return JsonResponse(data = {'put': ['hi', 'hi2']}, status=status.HTTP_200_OK)
+        try: 
+            user = Users.objects.get(id=id)
+            received_data = json.loads(request.body)
+            data = { 
+                **received_data, 
+                "id": id
+            }
+            # check if data is valid
+            serializer = UsersSerializer(data=data)
+            if serializer.is_valid(): 
+                user.name = data.get('name', '')
+                user.description = data.get('description', '')
+                user.dob = data.get('dob', '')
+                user.address = Address(**data.get("address", {}))
+                user.save()
+                return JsonResponse(data = {'data': serializer.data, 'success': True}, status=status.HTTP_202_ACCEPTED)
+            else: 
+                return JsonResponse(data = {'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except Users.DoesNotExist: 
+            return JsonResponse({'error': 'The user does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+        except Exception as e: 
+            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def delete(self, request, id, format=None):
         """
