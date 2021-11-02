@@ -100,6 +100,21 @@ class GetUsersTest(TestCase):
         self.assertTrue('createdAt' in user_data)
         self.assertEqual(user_data['address'], {**self.test_address2, "address_2": ""})
     
+    def tests_get_specific_user_by_id_user_not_found(self):
+        """
+            Test Case: GET /users/<str:id>/
+            Test if API is not able to retrieve data of a specific user based on the user's id if the id is invalid
+        """
+        test_user_id = 'yahui-wei-test'
+        response = self.client.get(reverse('users', args=[test_user_id]))
+
+        # check response format
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue('error' in response.json())
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertEqual(response_data['error'], 'The user does not exist')
+    
     def tests_create_user(self):
         """
             Test Case: POST /user/<str:id>/
