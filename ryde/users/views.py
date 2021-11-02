@@ -86,5 +86,11 @@ class UsersView(APIView):
         """
         Delete a specific user
         """
-        # usernames = [user.username for user in User.objects.all()]
-        return JsonResponse(data = {'delete': ['hi', 'hi2']}, status=status.HTTP_200_OK)
+        try: 
+            user = Users.objects.get(id=id)
+            user.delete()
+            return JsonResponse(data = {'success': True}, status=status.HTTP_204_NO_CONTENT)
+        except Users.DoesNotExist: 
+            return JsonResponse({'error': 'The user does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+        except Exception as e: 
+            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
