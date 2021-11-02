@@ -128,3 +128,25 @@ class GetUsersTest(TestCase):
         self.assertTrue('createdAt' in user_data)
         self.assertEqual(user_data['address'], {**test_user_data['address'], "address_2": ""})
     
+    def tests_delete_user(self):
+        """
+            Test Case: DELETE /users/<str:id>/
+            Test if API is able to delete user given the user's id
+        """
+        test_user_id = 'yahui-wei'
+        response = self.client.delete(reverse('users', args=[test_user_id]))
+
+        # check response format
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('success' in response.json())
+        response_data = response.json()
+        self.assertTrue(response_data['success'])
+        
+        # check if user has already been deleted
+        response = self.client.get(reverse('users', args=[test_user_id]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue('error' in response.json())
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertEqual(response_data['error'], 'The user does not exist')
+
