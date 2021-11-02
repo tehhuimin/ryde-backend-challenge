@@ -150,3 +150,16 @@ class GetUsersTest(TestCase):
         self.assertFalse(response_data['success'])
         self.assertEqual(response_data['error'], 'The user does not exist')
 
+    def tests_delete_user_user_doesnt_exist(self):
+        """
+            Test Case: DELETE /users/<str:id>/
+            Test if API is able to return 404 if user id is not found
+        """
+        test_user_id = 'yahui-wei-test'
+        response = self.client.delete(reverse('users', args=[test_user_id]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue('error' in response.json())
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertEqual(response_data['error'], 'The user does not exist')
+
