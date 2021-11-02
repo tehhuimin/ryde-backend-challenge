@@ -171,3 +171,24 @@ There are five REST APIs implemented. Please refer to `ryde/ryde/urls.py` and `r
         </td>
     </tr>
 </table>
+
+
+## Tests Cases
+
+| Endpoint | Test Name | Description | Passed? (Y/N)|
+| - | - | - | - |
+| GET /users  |  test_get_all_users | Test if API is able to retrieve a list of all users  | Y |
+| GET /users/<str:id>/  |  tests_get_specific_user_by_id |  Test if API is able to retrieve data of a specific user based on the user's id | Y |
+| GET /users/<str:id>/ |  tests_get_specific_user_by_id_user_not_found |             Test if API is not able to retrieve data of a specific user based on the user's id if the id is invalid | Y | 
+| POST /user/<str:id>/  | tests_create_user  |  Test if API is able to create a user with valid data | Y |
+| POST /user/<str:id>/  | tests_create_user_additional_invalid_fields  |  Test if API is giving bad request error when additional fields filled up | Y |
+| POST /user/<str:id>/    |  tests_create_user_invalid_data |  Test if API is able to throw HTTP_400_BAD_REQUEST if required fields are unfilled or invalid | Y |
+| POST /user/<str:id>/    | tests_create_user_empty  | Test if API is able to throw HTTP_400_BAD_REQUEST request body is empty  | Y |
+| POST /user/<str:id>/   |  tests_create_user_id_already_exists | Test if API is able to throw error 404 bad request if primary key (id) already existed  | Y |
+| PUT /users/<str:id>/ | tests_update_user  |  Test if API is able to update user in database when data is valid | Y |
+| PUT /users/<str:id>/  | tests_update_user_data_invalid  |  Test if API is able to throw bad request error id data is invalid | Y |
+| PUT /users/<str:id>/  | tests_update_user_data_invalid_address_field_errors  |              Test if API is able to throw bad request error id data in address embedded model is invalid| Y |
+| PUT /users/<str:id>/  | tests_update_user_additional_invalid_fields  |  Test if API is giving bad request error when additional fields filled up in request body | Y |
+|  PUT /users/<str:id>/   |  tests_update_user_user_doesnt_exist |  Test if API is able to return 404 if user id is not found | Y |
+|  DELETE /users/<str:id>/ |  tests_delete_user |  Test if API is able to delete user given the user's id | Y |
+|   DELETE /users/<str:id>/  | tests_delete_user_user_doesnt_exist  |  Test if API is able to return 404 if user id is not found | Y |

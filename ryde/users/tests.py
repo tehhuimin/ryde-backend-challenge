@@ -219,7 +219,7 @@ class GetUsersTest(TestCase):
     def tests_create_user_empty(self):
         """
             Test Case: POST /user/<str:id>/
-            Test if API is able to throw HTTP_400_BAD_REQUEST if required fields are unfilled
+            Test if API is able to throw HTTP_400_BAD_REQUEST request body is empty
         """
 
         test_user_data = {}
@@ -338,9 +338,9 @@ class GetUsersTest(TestCase):
         self.assertEqual(response_data['error']['address']['state'], ['This field is required.'])
         self.assertEqual(response_data['error']['address']['zip_code'], ['This field is required.'])
 
-    def tests_create_user_additional_invalid_fields(self):
+    def tests_update_user_additional_invalid_fields(self):
         """
-            Test Case: POST /user/<str:id>/
+            Test Case: PUT /user/<str:id>/
             Test if API is giving bad request error when additional fields filled up
         """
 
