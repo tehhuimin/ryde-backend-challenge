@@ -31,15 +31,18 @@ class UsersView(APIView):
         """
         
         try: 
-            user = get_object_or_404(Users, id=id)
+            user = Users.objects.get(id=id)
             serializer = UsersSerializer(user)
             user_response = serializer.data
             response = {
-                "user": user_response
+                "user": user_response,
+                'success': True
             }
             return JsonResponse(data = response, status=status.HTTP_200_OK)
+        except Users.DoesNotExist: 
+            return JsonResponse({'error': 'The user does not exist', 'success': False}, status=status.HTTP_404_NOT_FOUND) 
         except Exception as e: 
-            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse(data={'error': str(e), 'success': False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(
         operation_description="Create a new user", 
