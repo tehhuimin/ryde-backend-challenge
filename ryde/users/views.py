@@ -69,7 +69,7 @@ class UsersView(APIView):
                 address = data['address']
                 del data['address']
                 created = Users.objects.create(address=Address(**address), **data)
-                return JsonResponse(data = UsersSerializer(created).data, status=status.HTTP_201_CREATED)
+                return JsonResponse(data = {'data': UsersSerializer(created).data, 'success': True}, status=status.HTTP_201_CREATED)
             else: 
                 return JsonResponse(data = {'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e: 

@@ -135,7 +135,10 @@ class GetUsersTest(TestCase):
         test_user_id = 'hm'
         response = self.client.post(reverse('users', args=[test_user_id]), json.dumps(test_user_data), content_type="application/json")
         self.assertEqual(response.status_code, 201)
-        user_data = response.json()
+        response_data = response.json()
+        self.assertTrue(response_data['success'])
+        self.assertTrue('data' in response_data)
+        user_data = response_data['data']
         
         # check user data 
         self.assertEqual(user_data['id'], test_user_id)
