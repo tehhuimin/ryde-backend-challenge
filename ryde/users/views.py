@@ -18,10 +18,11 @@ class ListUsersView(APIView):
             users_response = UsersSerializer(users, many=True).data
             response = {
                 "users": users_response, 
+                'success': True
             }
             return JsonResponse(data = response, status=status.HTTP_200_OK)
         except Exception as e: 
-            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse(data={'error': str(e), 'success': False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UsersView(APIView):
 
