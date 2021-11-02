@@ -71,9 +71,9 @@ class UsersView(APIView):
                 created = Users.objects.create(address=Address(**address), **data)
                 return JsonResponse(data = {'data': UsersSerializer(created).data, 'success': True}, status=status.HTTP_201_CREATED)
             else: 
-                return JsonResponse(data = {'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse(data = {'error': serializer.errors, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e: 
-            return JsonResponse(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse(data={'error': str(e), 'success': False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(
         operation_description="Update an user details", 

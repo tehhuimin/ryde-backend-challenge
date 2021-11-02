@@ -148,6 +148,63 @@ class GetUsersTest(TestCase):
         self.assertTrue('createdAt' in user_data)
         self.assertEqual(user_data['address'], {**test_user_data['address'], "address_2": ""})
     
+        # test created user exists in database
+        response = self.client.get(reverse('users', args=[test_user_id]), )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('user' in response.json())
+        response_data = response.json()
+        self.assertTrue(response_data['success'])
+        user_data = response_data['user']
+        self.assertEqual(user_data['id'], test_user_id)
+        self.assertEqual(user_data['name'], test_user_data['name'])
+        self.assertEqual(user_data['description'], test_user_data['description'])
+        self.assertEqual(user_data['dob'], test_user_data['dob'])
+        self.assertEqual(user_data['address'], {**test_user_data['address'], "address_2": ""})
+
+    def tests_create_user_invalid_data(self):
+        """
+            Test Case: POST /user/<str:id>/
+            Test if API is able to throw HTTP_400_BAD_REQUEST if required fields are unfilled or invalid
+            * Testing with name field missing, date field doesn't match YYYY-MM-DD and zip-code in address missing 
+        """
+
+        test_user_data = {
+            "description": "",
+            "dob": "2021-11-02-02",
+            "address": {
+                "address_1": "blk 78 ",
+                "city": "singapore",
+                "state": "singapore"
+            }
+        }
+        test_user_id = 'test-invalid'
+        response = self.client.post(reverse('users', args=[test_user_id]), json.dumps(test_user_data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertTrue('error' in response_data)
+        self.assertEqual(response_data['error']['name'], ['This field is required.'])
+        self.assertEqual(response_data['error']['dob'], ['Date has wrong format. Use one of these formats instead: YYYY-MM-DD.'])
+        self.assertEqual(response_data['error']['address']['zip_code'], ['This field is required.'])
+    
+
+    def tests_create_user_empty(self):
+        """
+            Test Case: POST /user/<str:id>/
+            Test if API is able to throw HTTP_400_BAD_REQUEST if required fields are unfilled
+        """
+
+        test_user_data = {}
+        test_user_id = 'test-empty'
+        response = self.client.post(reverse('users', args=[test_user_id]),json.dumps(test_user_data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_data = response.json()
+        self.assertFalse(response_data['success'])
+        self.assertTrue('error' in response_data)
+        self.assertEqual(response_data['error']['name'], ['This field is required.'])
+        self.assertEqual(response_data['error']['dob'], ['This field is required.'])
+        self.assertEqual(response_data['error']['address'], ['This field is required.'])
+    
     def tests_update_user(self):
         """
             Test Case: PUT /users/<str:id>/
